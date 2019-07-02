@@ -1,3 +1,4 @@
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -5,7 +6,12 @@ import java.util.function.Consumer;
 
 public class MailService<S> implements Consumer<Sendable<S>> {
 
-    private OwnMap<String, List<S>> mailBox = new OwnMap<>();
+    private Map<String, List<S>> mailBox = new HashMap<String, List<S>>(){
+        @Override
+        public List<S> get(Object key) {
+            return super.getOrDefault(key,new LinkedList<>());
+        }
+    };
 
     public Map<String, List<S>> getMailBox() {
         return mailBox;
@@ -13,16 +19,9 @@ public class MailService<S> implements Consumer<Sendable<S>> {
 
     @Override
     public void accept(Sendable<S> message) {
-        List<S> list;
-        if (mailBox.get(message.getTo()) == null) {
-            list = new LinkedList<>();
-        } else {
-            list = mailBox.get(message.getTo());
-        }
-        try {
-            S s = (S) message.getContent();
+            List<S> list = mailBox.get(message.getTo());
+            S s =  message.getContent();
             list.add(s);
-        } catch (ClassCastException e) {}
         mailBox.put(message.getTo(), list);
     }
 }
