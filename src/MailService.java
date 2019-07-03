@@ -6,10 +6,10 @@ import java.util.function.Consumer;
 
 public class MailService<S> implements Consumer<Sendable<S>> {
 
-    private Map<String, List<S>> mailBox = new HashMap<String, List<S>>(){
+    private Map<String, List<S>> mailBox = new HashMap<String, List<S>>() {
         @Override
         public List<S> get(Object key) {
-            return super.getOrDefault(key,new LinkedList<>());
+            return super.getOrDefault(key, new LinkedList<>());
         }
     };
 
@@ -19,9 +19,9 @@ public class MailService<S> implements Consumer<Sendable<S>> {
 
     @Override
     public void accept(Sendable<S> message) {
-            List<S> list = mailBox.get(message.getTo());
-            S s =  message.getContent();
-            list.add(s);
+        List<S> list = mailBox.get(message.getTo());
+        S messageContent = message.getContent();
+        list.add(messageContent);
         mailBox.put(message.getTo(), list);
     }
 }
